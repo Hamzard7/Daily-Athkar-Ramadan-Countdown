@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Athkar, Ramadan Countdown & Zakah Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        .container {
+            text-align: center;
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 600px;
+        }
+
+        h1 {
+            color: #2e6b47;
+        }
+
+        h2 {
+            color: #d27435;
+        }
+
+        #athkar p {
+            font-size: 1.5em;
+            color: #4a4a4a;
+            margin: 20px 0;
+        }
+
+        #countdown p, .event-countdown p {
+            font-size: 2em;
+            font-weight: bold;
+            color: #d27435;
+        }
+
+        button {
+            font-size: 1.2em;
+            padding: 10px 20px;
+            background-color: #2e6b47;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #235a3f;
+        }
+
+        input {
+            font-size: 1.2em;
+            padding: 10px;
+            margin: 10px 0;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .result {
+            font-size: 1.5em;
+            margin-top: 20px;
+            color: #4a4a4a;
+        }
+
+        @media screen and (max-width: 600px) {
+            .container {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Daily Athkar</h1>
+        <div id="athkar">
+            <button onclick="revealAthkar()">Tap to Reveal Athkar</button>
+            <p id="athkarText" style="display: none;"></p>
+        </div>
+
+        <h2>Ramadan Countdown</h2>
+        <div id="ramadanCountdown" class="event-countdown">
+            <p id="ramadanTimer"></p>
+        </div>
+
+        <h2>Islamic New Year Countdown</h2>
+        <div id="islamicNewYearCountdown" class="event-countdown">
+            <p id="islamicNewYearTimer"></p>
+        </div>
+
+        <h2>Eid al-Fitr 2025 Countdown</h2>
+        <div id="eidCountdown" class="event-countdown">
+            <p id="eidTimer"></p>
+        </div>
+
+        <h2>Zakah Calculator</h2>
+        <div id="zakahCalculator">
+            <h3>Gold Zakah Calculator</h3>
+            <input type="number" id="goldAmount" placeholder="Enter amount of gold (in grams)" />
+            <button onclick="calculateGoldZakah()">Calculate Zakah on Gold</button>
+            <div id="goldResult" class="result"></div>
+
+            <h3>Assets Zakah Calculator</h3>
+            <input type="number" id="assetsAmount" placeholder="Enter total assets amount (in currency)" />
+            <button onclick="calculateAssetsZakah()">Calculate Zakah on Assets</button>
+            <div id="assetsResult" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        // Athkar List with English, Pronunciation, and Times
+        const athkarList = [
+            {
+                arabic: "أَعُوذُ بِاللهِ مِنْ الشَّيْطَانِ الرَّجِيمِ",
+                english: "I seek refuge with Allah from the accursed devil.",
+                pronunciation: "A'udhu billahi min ash-shaytaan ir-rajeem",
+                times: "Say once in the morning and evening."
+            },
+            {
+                arabic: "اللّهُ لاَ إِلَـهَ إِلاَّ هُوَ الْحَيُّ الْقَيُّومُ...",
+                english: "Allah! There is no deity except Him, the Ever-Living, the Sustainer of existence...",
+                pronunciation: "Allahu la ilaha illa Huwa, al-hayyul qayyum...",
+                times: "Recite it once in the morning and once in the evening."
+            },
+            // More Athkar for morning and evening...
+        ];
+
+        // Function to randomly select an Athkar and display it
+        function revealAthkar() {
+            const randomIndex = Math.floor(Math.random() * athkarList.length);
+            const athkarText = document.getElementById('athkarText');
+            athkarText.style.display = 'block';
+            athkarText.innerHTML = `
+                <p><strong>Arabic:</strong> ${athkarList[randomIndex].arabic}</p>
+                <p><strong>English Translation:</strong> ${athkarList[randomIndex].english}</p>
+                <p><strong>Pronunciation:</strong> ${athkarList[randomIndex].pronunciation}</p>
+                <p><strong>Times to Say:</strong> ${athkarList[randomIndex].times}</p>
+            `;
+        }
+
+        // Zakah Calculator logic
+        const NISAB_GOLD = 85; // Nisab for gold (in grams)
+        const ZAKAH_RATE = 0.025; // Zakah rate (2.5%)
+
+        function calculateGoldZakah() {
+            const goldAmount = parseFloat(document.getElementById('goldAmount').value);
+            if (isNaN(goldAmount) || goldAmount <= 0) {
+                alert("Please enter a valid amount of gold.");
+                return;
+            }
+            let zakah = 0;
+            if (goldAmount >= NISAB_GOLD) {
+                zakah = goldAmount * ZAKAH_RATE;
+                document.getElementById('goldResult').innerHTML = `Zakah on ${goldAmount} grams of gold is: ${zakah.toFixed(2)} grams of gold.`;
+            } else {
+                document.getElementById('goldResult').innerHTML = `Your gold is below the Nisab. Zakah is not due.`;
+            }
+        }
+
+        function calculateAssetsZakah() {
+            const assetsAmount = parseFloat(document.getElementById('assetsAmount').value);
+            if (isNaN(assetsAmount) || assetsAmount <= 0) {
+                alert("Please enter a valid amount of assets.");
+                return;
+            }
+            let zakah = 0;
+            if (assetsAmount >= NISAB_GOLD * 40) { // Roughly, Nisab for assets is 85 grams of gold * current gold price (40 times).
+                zakah = assetsAmount * ZAKAH_RATE;
+                document.getElementById('assetsResult').innerHTML = `Zakah on assets of ${assetsAmount} is: ${zakah.toFixed(2)} units of currency.`;
+            } else {
+                document.getElementById('assetsResult').innerHTML = `Your assets are below the Nisab. Zakah is not due.`;
+            }
+        }
+
+        // Countdown functions
+        function updateRamadanCountdown() {
+            const ramadanStartDate = new Date("2025-03-23T00:00:00Z"); // Ramadan 2025 start date
+            const now = new Date();
+            const timeRemaining = ramadanStartDate - now;
+            const daysRemaining = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+            document.getElementById('ramadanTimer').innerHTML = `${daysRemaining} days left until Ramadan 2025!`;
+        }
+
+        function updateIslamicNewYearCountdown() {
+            const islamicNewYearDate = new Date("2025-07-30T00:00:00Z"); // Islamic New Year 2025
+            const now = new Date();
+            const timeRemaining = islamicNewYearDate - now;
+            const daysRemaining = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+            document.getElementById('islamicNewYearTimer').innerHTML = `${daysRemaining} days left until Islamic New Year 2025!`;
+        }
+
+        function updateEidCountdown() {
+            const eidDate = new Date("2025-05-02T00:00:00Z"); // Eid al-Fitr 2025 date
+            const now = new Date();
+            const timeRemaining = eidDate - now;
+            const daysRemaining = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+            document.getElementById('eidTimer').innerHTML = `${daysRemaining} days left until Eid al-Fitr 2025!`;
+        }
+
+        // Update countdowns every day
+        setInterval(updateRamadanCountdown, 86400000); // Update Ramadan countdown every 24 hours
+        setInterval(updateIslamicNewYearCountdown, 86400000); // Update Islamic New Year countdown
+        setInterval(updateEidCountdown, 86400000); // Update Eid countdown
+        updateRamadanCountdown(); // Initial call to set Ramadan countdown
+        updateIslamicNewYearCountdown(); // Initial call to set Islamic New Year countdown
+        updateEidCountdown(); // Initial call to set Eid countdown
+    </script>
+</body>
+</html>
+
